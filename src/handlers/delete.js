@@ -2,14 +2,14 @@ const pool = require('../../db/conectDB.js')
 const erase = module.exports;
 
 // Borrar nuevo Intento 
-erase.deleteAttempt = async(req,res)=>{
+erase.deleteAttempt = (req,res)=>{
 
     try {
         let {id}=req.params;
 
-        pool.query("DELETE FROM Usuario_has_Intento WHERE id_usuario_intentos = ?", id, async(err,result)=>{
+        pool.query("DELETE FROM Usuario_has_Intento WHERE id_usuario_intentos = ?", id, (err,result)=>{
             if (err) throw err;
-            await res.status(201).send({message:`Hemos Eliminado el Intento con ${id} de los registros`});
+             res.status(201).send({message:`Hemos Eliminado el Intento con ${id} de los registros`});
         });
         
     } catch (error) {
@@ -19,7 +19,7 @@ erase.deleteAttempt = async(req,res)=>{
 };
 
 
-erase.prueba = async(req,res)=>{
+erase.prueba = (req,res)=>{
 
     try {
         // variables
@@ -47,7 +47,7 @@ erase.prueba = async(req,res)=>{
         if(fecha){fecha2=`and Fecha = ${fecha}`}else{fecha2=``}
 
 
-        pool.query(`SELECT * FROM Usuario WHERE ${grupo2} ${nombre2} ${gerente2} ${razon2} ${ciudad2}`,async(err,result)=>{
+        pool.query(`SELECT * FROM Usuario WHERE ${grupo2} ${nombre2} ${gerente2} ${razon2} ${ciudad2}`,(err,result)=>{
             res.send(result);
         })
         
@@ -57,7 +57,7 @@ erase.prueba = async(req,res)=>{
 
 }
 
-erase.consulta=async(req,res)=>{
+erase.consulta=(req,res)=>{
 
     try {
         // variables
@@ -88,7 +88,7 @@ erase.consulta=async(req,res)=>{
         pool.query(`SELECT *, MAX(Calificacion) AS Calificacion_Max FROM Usuario_has_Moto
                     INNER JOIN Usuario ON Usuario_has_Moto.Usuario_idUsuario = Usuario.idUsuario 
                     INNER JOIN Moto ON Usuario_has_Moto.Moto_id = Moto.id
-                    WHERE ${grupo2} ${nombre2} ${gerente2} ${razon2} ${ciudad2} GROUP BY Usuario.idUsuario `,async(err,result)=>{
+                    WHERE ${grupo2} ${nombre2} ${gerente2} ${razon2} ${ciudad2} GROUP BY Usuario.idUsuario `,(err,result)=>{
             res.send(result);
         })
         
