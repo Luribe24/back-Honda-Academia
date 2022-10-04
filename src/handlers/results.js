@@ -5,12 +5,12 @@ const insert = module.exports;
 insert.newAttempt = (req,res)=>{
 
     try {
-        let {Usuario_idUsuario,Status,Intento_actual,id_moto}=req.body;
-        let data = {Usuario_idUsuario,Status,Intento_actual,id_moto};
+        let {Usuario_idUsuario,Status,Intento_actual,id_moto,Fecha}=req.body;
+        let data = {Usuario_idUsuario,Status,Intento_actual,id_moto,Fecha};
 
         pool.query("INSERT INTO Usuario_has_Intento SET ?", data, (err,result)=>{
             if (err) throw err;
-             res.status(201).send({message:`Agregamos el Intento del Curso ${id_moto} Para el Usuario ${Usuario_idUsuario}`});
+            res.status(201).send({message:`Agregamos el Intento del Curso ${id_moto} Para el Usuario ${Usuario_idUsuario}`});
         });
         
     } catch (error) {
@@ -24,8 +24,8 @@ insert.answersActivity =  (req,res)=>{
 
     try {
                 
-        let {Usuario_idUsuario,Pregunta_actividad_id,Calificacion,Respuesta,Intento_idIntento} = req.body;
-        let data = {Usuario_idUsuario,Pregunta_actividad_id,Calificacion,Respuesta,Intento_idIntento};
+        let {Usuario_idUsuario,Pregunta_actividad_id,Calificacion,Respuesta,Intento_idIntento,Fecha} = req.body;
+        let data = {Usuario_idUsuario,Pregunta_actividad_id,Calificacion,Respuesta,Intento_idIntento,Fecha};
 
         pool.query("INSERT INTO Usuario_has_Pregunta_actividad SET ?",data,(err,result)=>{
             if(err) throw err;
@@ -44,8 +44,8 @@ insert.answersActivity =  (req,res)=>{
 insert.activityTotalResult = (req,res)=>{
 
     try {
-        let {Usuario_idUsuario,Actividad_idActividades,Calificacion,Intento_idIntento,Nivel_completado} =req.body  
-        let data = {Usuario_idUsuario,Actividad_idActividades,Calificacion,Intento_idIntento,Nivel_completado}
+        let {Usuario_idUsuario,Actividad_idActividades,Fecha,Calificacion,Intento_idIntento,Nivel_completado,Duration} =req.body  
+        let data = {Usuario_idUsuario,Actividad_idActividades,Fecha,Calificacion,Intento_idIntento,Nivel_completado,Duration}
         pool.query("INSERT INTO Usuario_has_Actividad SET ? ",data,  (err,result)=>{
             if(err) throw err;
              res.send(`Datos ingrasados Correctamente a la base de datos`);
@@ -54,7 +54,7 @@ insert.activityTotalResult = (req,res)=>{
     } catch (error) {
         res.status(500);
         console.error(error);
-    }
+    };
 };
 
 // Insertar respuestas de una actividad
@@ -85,8 +85,8 @@ insert.resultQuestionExamen = (req,res)=>{
      
     try {
         
-        let {Usuario_idUsuario,Pregunta_examen_idPregunta_examen,Calificacion,Respuesta,Intento_idIntento} = req.body;
-        let data = {Usuario_idUsuario,Pregunta_examen_idPregunta_examen,Calificacion,Respuesta,Intento_idIntento};
+        let {Usuario_idUsuario,Pregunta_examen_idPregunta_examen,Calificacion,Respuesta,Intento_idIntento,Fecha} = req.body;
+        let data = {Usuario_idUsuario,Pregunta_examen_idPregunta_examen,Calificacion,Respuesta,Intento_idIntento,Fecha};
 
         pool.query("INSERT INTO Usuario_has_Pregunta_examen SET ?", data, (err,result)=>{
 
@@ -106,8 +106,8 @@ insert.resultQuestionExamen = (req,res)=>{
 //Insertar Resultado del examen 
 insert.restulExamen = (req,res) =>{
     try {
-        let {Usuario_idUsuario,Examen_idExamen,Calificacion,Intento_idIntento } = req.body;
-        let data = {Usuario_idUsuario,Examen_idExamen,Calificacion,Intento_idIntento }
+        let {Usuario_idUsuario,Examen_idExamen,Calificacion,Intento_idIntento,Fecha,Duration } = req.body;
+        let data = {Usuario_idUsuario,Examen_idExamen,Calificacion,Intento_idIntento,Fecha,Duration }
 
         pool.query('INSERT INTO Usuario_has_Examen SET ? ',data, (err,result)=>{
             if (err) throw err;
@@ -129,8 +129,8 @@ insert.resultModule = (req,res)=>{
      
     try {
         
-        let {Usuario_idUsuario,Moto_id,Calificacion,Intento_idIntento} = req.body;
-        let data = {Usuario_idUsuario,Moto_id,Calificacion,Intento_idIntento};
+        let {Usuario_idUsuario,Moto_id,Calificacion,Intento_idIntento,Fecha} = req.body;
+        let data = {Usuario_idUsuario,Moto_id,Calificacion,Intento_idIntento,Fecha};
 
         pool.query("INSERT INTO Usuario_has_Moto SET ?", data, (err,result)=>{
 

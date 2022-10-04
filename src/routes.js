@@ -100,7 +100,7 @@ router.get('/categorias',viewer.categories);
     //Ver las catergorias por examen filtrado por ID CURSO 
     router.get('/categorias/examen/:idCurse',viewer.categoriesExamen);
     // Ver las peguntas por categoria del examen
-    router.get('/preguntas/examen/:categoria1/:categoria2/:categoria3/:categoria4/:categoria5/:limit',viewer.questionsEachCategory);
+    router.get('/preguntas/examen/:categoria1/:categoria2/:categoria3/:categoria4/:categoria5/:limit/:id',viewer.questionsEachCategory);
     //Ver las respuestas por id de la pregunta del examen
     router.get(`/respuestas/examen/pregunta/:idQuestion`,viewer.answerEachQuestionId);
     

@@ -42,7 +42,7 @@ view.intentos = (req,res)=>{
     view.manyInfoPosventa = (req,res)=>{
         try {
             let {user,curse}=req.params;
-            pool.query(`SELECT idUsuario, Nombre, sexo, id_usuario_intentos, Status ,Intento_actual, Nombre_moto, Max_intentos, Logo, Pagina_Curso, Img_actividad,Nombre_actividad,Url_nivel, idActividades, Moto.id as motoID, Actividad.Material FROM Usuario 
+            pool.query(`SELECT idUsuario, Nombre, sexo, id_usuario_intentos, Status ,Intento_actual, Nombre_moto, Max_intentos, Logo, Pagina_Curso, Img_actividad,Nombre_actividad,Url_nivel, idActividades, Moto.id as motoID, Actividad.Material,Ventas,Posventa,Ficha_tecnica FROM Usuario 
             INNER JOIN Usuario_has_Intento on Usuario.idUsuario = Usuario_has_Intento.Usuario_idUsuario
             INNER JOIN Moto on Usuario_has_Intento.id_moto = Moto.id
             INNER JOIN Actividad on Moto.id = Actividad.Moto_id
@@ -51,6 +51,8 @@ view.intentos = (req,res)=>{
                 if(result.length==0){
                     res.status(404).json({
                         message:`No se ha logrado concretar la consulta de la información de posventa`,
+                        user:user,
+                        curse:curse,
                     });
                 }else{
                     res.send(result);
@@ -228,7 +230,7 @@ view.intentos = (req,res)=>{
     view.activities = (req,res)=>{
         try {
             let {id} = req.params;
-            pool.query("SELECT * FROM Actividad WHERE Moto_id =?",id,  (err,result)=>{
+            pool.query("SELECT * FROM Actividad WHERE Moto_id =? ORDER BY idActividades ASC",id,  (err,result)=>{
                 if(err) throw err;
                 if(result.length == 0){
                     res.status(404).json({
@@ -616,21 +618,26 @@ view.intentos = (req,res)=>{
     //Obtener las preguntas por la categoria 
     view.questionsEachCategory = (req,res)=>{
         try {
-            let {categoria1 ,categoria2,categoria3,categoria4,categoria5,limit}= req.params;
+            let {categoria1 ,categoria2,categoria3,categoria4,categoria5,limit,id}= req.params;
             pool.query(`SELECT * FROM (SELECT * FROM Pregunta_examen 
-                        WHERE Categoria_idCategoria = ? ORDER BY RAND() LIMIT ?)t
+                        WHERE Categoria_idCategoria = ?  and Examen_idExamen=? ORDER BY RAND() LIMIT ?)t
                         
                         UNION SELECT * FROM (SELECT * FROM Pregunta_examen 
-                        WHERE Categoria_idCategoria = ? ORDER BY RAND() Limit ?)t
+                        WHERE Categoria_idCategoria = ? and Examen_idExamen=? ORDER BY RAND() Limit ?)t
                         
                         UNION SELECT * FROM (SELECT * FROM Pregunta_examen 
-                        WHERE Categoria_idCategoria = ? ORDER BY RAND() Limit ?)t
+                        WHERE Categoria_idCategoria = ? and Examen_idExamen=? ORDER BY RAND() Limit ?)t
                         
                         UNION SELECT * FROM (SELECT * FROM Pregunta_examen 
-                        WHERE Categoria_idCategoria = ? ORDER BY RAND() Limit ?)t
+                        WHERE Categoria_idCategoria = ? and Examen_idExamen=? ORDER BY RAND() Limit ?)t
                         
                         UNION SELECT * FROM (SELECT * FROM Pregunta_examen 
-                        WHERE Categoria_idCategoria = ? ORDER BY RAND() Limit ?)t`,[categoria1 || 0,parseInt(limit),categoria2 || 0 ,parseInt(limit),categoria3 || 0,parseInt(limit),categoria4 || 0 ,parseInt(limit),categoria5 || 0 ,parseInt(limit)],(err,result)=>{
+                        WHERE Categoria_idCategoria = ? and Examen_idExamen=? ORDER BY RAND() Limit ?)t`,[
+                            categoria1 ||0, id   ,parseInt(limit),
+                            categoria2 ||0, id   ,parseInt(limit),
+                            categoria3 ||0, id   ,parseInt(limit),
+                            categoria4 ||0, id   ,parseInt(limit),
+                            categoria5 ||0, id   ,parseInt(limit)],(err,result)=>{
 
                     if (err) throw err;
                     if(result.length ==0){
