@@ -143,6 +143,53 @@ view.intentos = (req,res)=>{
         }
     };
 
+    // Consultar la ficha técnica
+    view.getFichaTecnica = (req,res)=>{
+        try {
+            let {curseID} =req.params;
+            pool.query(`SELECT * FROM Ficha_tecnica 
+                        WHERE Moto_id = ?`,curseID,(err,result)=>{
+                            if(err) throw err;
+                            if(result.length==0){
+                                res.status(404).json({
+                                    message:`No hay ficha tecnica para el curso ID: ${curseID}`,
+                                    idCurso:curseID,
+                                })
+                            }else{
+                                res.send(result);
+                                console.log(`Ver ficha tecnica para el curso con ID ${curseID}`);
+                            };
+            });
+        } catch (error) {
+            console.log(error)
+        };
+    };
+
+    // Consultar estado de la ficha técnica
+    view.consultResultFT = (req,res)=>{
+        try {
+            let {user,idFT,intento}=req.params;
+            pool.query(`SELECT * FROM Usuario_has_Ficha_tecnica
+                        WHERE Usuario_idUsuario = ? and Ficha_tecnica_idFicha_tecnica = ? and Intento_idIntento= ? ORDER BY id_usuario_ficha DESC LIMIT 1`,[user,idFT,intento],(err,result)=>{
+                if(err) throw err;
+                if(result.length==0){
+                    res.send({
+                        message:`No hay resultado para la Ficha técnica cuando el usuario es ID ${user} FT ID : ${idFT} y el intento es el ${intento}`,
+                        user:user,
+                        idFicha:idFT,
+                        intento:intento
+                    });
+                    console.log(`No hay resultado para la Ficha técnica cuando el usuario es ID ${user} FT ID : ${idFT} y el intento es el ${intento}`)
+                }else{
+                    res.send(result);
+                    console.log(`Se consultó el resultado para la Ficha técnica cuando el usuario es ID ${user} FT ID : ${idFT} y el intento es el ${intento}`)
+                };
+            });
+        } catch (error) {
+            console.log(error);
+        };
+    };
+
     // Ver información del usuario
     view.users = (req,res)=>{
         try {
@@ -447,7 +494,9 @@ view.intentos = (req,res)=>{
     view.activitiesResultEachUserAndActivity =(req,res)=>{
         try {  
             let {activity_id,id_user,idIntento} = req.params;
-            pool.query(`SELECT * FROM Usuario_has_Actividad WHERE Usuario_idUsuario = ? and Actividad_idActividades = ? and Intento_idIntento = ?
+            pool.query(`SELECT * FROM Usuario_has_Actividad 
+                        INNER JOIN Actividad on Actividad_idActividades = Actividad.idActividades
+                        WHERE Usuario_idUsuario = ? and Actividad_idActividades = ? and Intento_idIntento = ?
                         ORDER BY id_user_actividad DESC Limit 1`,[id_user,activity_id,idIntento],  (err,result)=>{
                 if(err) throw err;
                 if(result.length == 0){
@@ -505,7 +554,8 @@ view.intentos = (req,res)=>{
                 }else{
                     res.send({
                         message:`No hay contenido para esta consulta`,
-                        status: 404
+                        status: 404,
+                        idActividad:idActividad,
                     });
                     console.log(`No hay consulta especifica de la actividad con ID ${idActividad} en el intento ${attemp} para el usuario con ID ${iduser}`)
                 };

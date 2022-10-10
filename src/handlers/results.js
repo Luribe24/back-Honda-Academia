@@ -1,3 +1,4 @@
+const { query } = require('express');
 const pool = require('../../db/conectDB.js')
 const insert = module.exports;
 
@@ -5,8 +6,8 @@ const insert = module.exports;
 insert.newAttempt = (req,res)=>{
 
     try {
-        let {Usuario_idUsuario,Status,Intento_actual,id_moto,Fecha}=req.body;
-        let data = {Usuario_idUsuario,Status,Intento_actual,id_moto,Fecha};
+        let {Usuario_idUsuario,Status,Intento_actual,id_moto,Fecha,Escape}=req.body;
+        let data = {Usuario_idUsuario,Status,Intento_actual,id_moto,Fecha,Escape};
 
         pool.query("INSERT INTO Usuario_has_Intento SET ?", data, (err,result)=>{
             if (err) throw err;
@@ -84,24 +85,33 @@ insert.resultActivity = (req,res)=>{
 insert.resultQuestionExamen = (req,res)=>{
      
     try {
-        
         let {Usuario_idUsuario,Pregunta_examen_idPregunta_examen,Calificacion,Respuesta,Intento_idIntento,Fecha} = req.body;
         let data = {Usuario_idUsuario,Pregunta_examen_idPregunta_examen,Calificacion,Respuesta,Intento_idIntento,Fecha};
-
         pool.query("INSERT INTO Usuario_has_Pregunta_examen SET ?", data, (err,result)=>{
-
             if (err) throw err;
-
-             res.status(201).json({message:`Datos del usuario agregados a su base de datos`});
+            res.status(201).json({message:`Datos del usuario agregados a su base de datos`});
         });
-
-    } catch (error) {
-        
+    } catch (error) { 
         res.status(500);
         res.send(`Hay un error tipo: ${error.message}`);
     };
-    
 };
+
+// Insertar ficha tecnica realizada
+insert.fichatecnicaResult = (req,res)=>{
+    try {
+        let {Usuario_idUsuario,Ficha_tecnica_idFicha_tecnica,Fecha,Ficha_completada,Intento_idIntento,Duracion} =req.body;
+        let data = {Usuario_idUsuario,Ficha_tecnica_idFicha_tecnica,Fecha,Ficha_completada,Intento_idIntento,Duracion};
+        pool.query(`INSERT INTO Usuario_has_Ficha_tecnica SET ?`,data,(err,result)=>{
+            if(err) throw err;
+            res.status(201).json({message:`Datos agregados a su base de datos`});
+        })
+    } catch (error) {
+        res.status(500);
+        res.send(`Hay un error tipo: ${error.message}`);
+    };
+};
+
 
 //Insertar Resultado del examen 
 insert.restulExamen = (req,res) =>{
@@ -121,16 +131,15 @@ insert.restulExamen = (req,res) =>{
         res.status(500);
         res.send(`Hay un error tipo: ${error}`);
     };
-}
-
+};
 
 // Resultado del Usuario que completó el curso
 insert.resultModule = (req,res)=>{
      
     try {
         
-        let {Usuario_idUsuario,Moto_id,Calificacion,Intento_idIntento,Fecha} = req.body;
-        let data = {Usuario_idUsuario,Moto_id,Calificacion,Intento_idIntento,Fecha};
+        let {Usuario_idUsuario,Moto_id,Calificacion,Intento_idIntento,Fecha,Escape} = req.body;
+        let data = {Usuario_idUsuario,Moto_id,Calificacion,Intento_idIntento,Fecha,Escape};
 
         pool.query("INSERT INTO Usuario_has_Moto SET ?", data, (err,result)=>{
 
@@ -145,7 +154,6 @@ insert.resultModule = (req,res)=>{
         res.status(500);
         res.send(`Hay un error tipo: ${error}`);
     };
-    
 };
 
 

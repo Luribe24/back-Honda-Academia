@@ -73,6 +73,11 @@ router.get('/categorias',viewer.categories);
     //Ver las actividades y el estado en el que se encuentran
     router.get('/actividades/resultados/usuario/:idUser/actividad/:idCurse/intento/:idIntento', viewer.activitiyWithResults);
 
+    // Ver la ficha tecnica 
+    router.get('/fichaTecnica/:curseID', viewer.getFichaTecnica);
+    // Consultar resultado de ficha técnica
+    router.get('/resultado/FichaTecnica/:user/:idFT/:intento',viewer.consultResultFT);
+
     // =============== EXAMENES =======================
 
     //Ver todos los examenes
@@ -155,6 +160,11 @@ router.get('/categorias',viewer.categories);
 
     //Insertar resultado de las actividades
     router.post('/insertar/resultados/actividades',insert.activityTotalResult);
+    
+
+    // =============== FICHA TECNICA =======================
+    router.post('/fichaTecnica/result',insert.fichatecnicaResult);
+
 
     // =============== EXAMEN =======================
 
