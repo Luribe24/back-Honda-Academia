@@ -30,10 +30,16 @@ router.get('/categorias',viewer.categories);
 
     // ================= CURSOS ==========================
 
-    //Mostrar un curso filtrado por ID de la moto
+    // Mostrar un curso filtrado por ID de la moto
     router.get('/curso/:id', viewer.curso);
-    //Mostrar Todos los cursos -- listado cpompleto
+    // Mostrar Todos los cursos -- listado cpompleto
     router.get('/cursos', viewer.cursos);
+    // Mostrar cursos disponibles por cargo
+    router.get(`/cursosDisponibles/:idUser`, viewer.userCargeCurses);
+    // Mostrar Cursos disponibles para posventa Admin // Pagina de cursos 
+    router.get(`/cursos/posventa/admin`,viewer.adminCoursesPosventa);
+    // Cursos de ventas // Motocicletas 
+    router.get(`/cursos/ventas`, viewer.userVentasCursos);
 
     // =============== ACTIVIDADES =======================
 
@@ -90,7 +96,7 @@ router.get('/categorias',viewer.categories);
     router.get('/preguntas/examen/:id_examen',viewer.questionsQuizz);
     //Ver Respuestas de las preguntas de los examenes
     router.get('/respuestas/examenes',viewer.answersQuizzes);
-    //Ver Respuestas de los examenes filtrado por el ID del examen
+    //Ver Respuestas de los examenes filtrado por el ID dela Pregunta examen
     router.get('/respuestas/examen/:id_examen',viewer.answersQuizz);
     //Ver Respuestas que mandaron los usuarios en los examenes
     router.get('/respuestas/examenes/usuarios', viewer.answersQuizzesUsers);
@@ -124,6 +130,9 @@ router.get('/categorias',viewer.categories);
     router.get('/resultados/cursos',viewer.UserCompleteCurso);
     // Ver el resultado del curso filtrado por intento usuario y curso
     router.get('/resultado/curso/usuario/:user/intento/:attemp/curso/:curse', viewer.userCompleteCursoSpacificConsult);
+    // consultar si el usuario terminó un curso en especifico 
+    router.get(`/paginaUsuario/resultado/usuario/:idUser/curso/:idMoto` , viewer.resultUserPage)
+
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
@@ -148,6 +157,11 @@ router.get('/categorias',viewer.categories);
 // post
 // --------------------------------------------------------------------------
 
+    // ====================== LOGIN ===========================
+    
+    //Usuario por Email
+    router.post(`/login`, insert.login);
+
     // =============== INTENTOS =======================
 
     //Insertar nuevo Intento Por usuario
@@ -161,12 +175,13 @@ router.get('/categorias',viewer.categories);
     //Insertar resultado de las actividades
     router.post('/insertar/resultados/actividades',insert.activityTotalResult);
     
-
     // =============== FICHA TECNICA =======================
     router.post('/fichaTecnica/result',insert.fichatecnicaResult);
 
-
     // =============== EXAMEN =======================
+
+
+
 
     // Insertar respuestas del usuario a una pregunta del examen
     router.post('/respuestas/examen/unicas',insert.resultQuestionExamen);
@@ -185,9 +200,6 @@ router.get('/categorias',viewer.categories);
 
     // Eliminamos el intento por Id Unico de la tabla
     router.delete('/delete/intento/:id', erase.deleteAttempt);
-
-    router.get('/probandoCositas',erase.prueba);
-    router.get('/probandoCositas2', erase.consulta);
 
 //========================================================= DANIEL DASHBOARD
 

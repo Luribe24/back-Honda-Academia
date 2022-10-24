@@ -42,7 +42,7 @@ view.intentos = (req,res)=>{
     view.manyInfoPosventa = (req,res)=>{
         try {
             let {user,curse}=req.params;
-            pool.query(`SELECT idUsuario, Nombre, sexo, id_usuario_intentos, Status ,Intento_actual, Nombre_moto, Max_intentos, Logo, Pagina_Curso, Img_actividad,Nombre_actividad,Url_nivel, idActividades, Moto.id as motoID, Actividad.Material,Ventas,Posventa,Ficha_tecnica FROM Usuario 
+            pool.query(`SELECT idUsuario, Nombre, sexo, id_usuario_intentos, Status ,Intento_actual, Nombre_moto, Max_intentos, Logo, Pagina_Curso, Img_actividad,Nombre_actividad,Url_nivel, idActividades, Moto.id as motoID, Actividad.Material,Ventas,Posventa,Ficha_tecnica, Actividad.Minutes FROM Usuario 
             INNER JOIN Usuario_has_Intento on Usuario.idUsuario = Usuario_has_Intento.Usuario_idUsuario
             INNER JOIN Moto on Usuario_has_Intento.id_moto = Moto.id
             INNER JOIN Actividad on Moto.id = Actividad.Moto_id
@@ -246,11 +246,68 @@ view.intentos = (req,res)=>{
         }
     };
 
+    // Ver cursos por cargo POSVENTA 
+    view.userCargeCurses =(req,res)=>{
+        try {
+            let {idUser} = req.params;
+            console.log(idUser)
+            pool.query(`Select Usuario.Nombre, Cargo.idCargo, Cargo_has_Moto.Moto_id, Moto.Nombre_moto, Moto.Img_actividad, Moto.img_Curso, Moto.disabled  from Usuario, Cargo, Cargo_has_Moto, Moto
+            where Cargo.idCargo = Usuario.Cargo_idCargo
+            AND Cargo_has_Moto.Cargo_idCargo = Cargo.idCargo
+            AND Cargo_has_Moto.Moto_id = Moto.id
+            AND idUsuario = ? ORDER BY Moto.Nombre_moto ASC`, idUser, (err,result)=>{
+                if (err) throw err;
+                if( result.length ==0){
+                    res.status(404).json({
+                        message:`No hay cursos para este cargo`,
+                        error_Status:404
+                    });
+                } else{
+                    res.send(result);
+                    console.log(`El usuario consulto sus cursos disponibles`)
+                };
+            });
+        } catch (error) {
+            console.error(error);
+        };
+    };
+
+    // Ver los cursos PARA VENTAS 
+    view.userVentasCursos=(req,res)=>{
+        try {
+            pool.query(`SELECT * FROM Moto WHERE Ventas=1`, (err,result)=>{
+                res.send(result)
+            })
+        } catch (error) {
+            console.error(error);
+        };
+    };
+
+    // Ver cursos posventa Administrador 
+    view.adminCoursesPosventa = (req,res)=>{
+        try {
+            pool.query(`SELECT * FROM Moto
+            WHERE Posventa= 1 and Ventas=0`,(err,result)=>{
+                if(result.length==0){
+                    res.status(404).json({
+                        message:'No hay cursos En posventa',
+                        error_Status:404
+                    });
+                }else{
+                    res.send(result);
+                    console.log('Se consultaron los cursos de posventa Mode Admin');
+                };
+            })
+        } catch (error) {
+            console.error(error);
+        };
+    };
+
     //Ver todos los cursos
     view.cursos = (req,res)=>{
         try {
 
-            pool.query("SELECT * FROM Moto",  (err,result)=>{
+            pool.query("SELECT * FROM Moto ORDER BY Nombre_moto ASC",  (err,result)=>{
                 if(err) throw err;
                  res.send(result);
                 console.log('Todos los cursos fueron consultados')
@@ -1054,6 +1111,29 @@ view.intentos = (req,res)=>{
         };
 
     };
+
+    // Ver los resultados Perfil del usuario 
+    view.resultUserPage=(req,res)=>{
+        try {
+            let {idUser,idMoto} = req.params;
+            pool.query(`SELECT * FROM Usuario_has_Moto
+            WHERE Usuario_idUsuario= ? and Moto_id = ? ORDER BY Calificacion DESC LIMIT 1`,[idUser,idMoto],(err,result)=>{
+                if(err) throw err;
+                if(result.length==0){
+                    res.status(404).json({
+                        message:`No hay Resultado para este curso`,
+                        error_Status:404,
+                        id:idMoto
+                    });
+                }else{
+                    res.send(result)
+                };
+            });
+        } catch (error) {
+            console.error(error)
+        };
+    };
+
 
 // ==============================================================================
 // ============================= DANIEL DASH BOARD ===============================

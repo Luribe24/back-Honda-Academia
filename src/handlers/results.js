@@ -1,6 +1,29 @@
-const { query } = require('express');
+
 const pool = require('../../db/conectDB.js')
 const insert = module.exports;
+
+// Ver usuario Filtrado por Correo -- LOGIN 
+insert.login=(req,res)=>{
+    try {
+        let {email}=req.body;
+        console.log(email)
+        pool.query(`SELECT * FROM Usuario 
+        WHERE Correo =?`, email,(err,result)=>{
+            if(err) throw err;
+            if(result.length ==0){
+                res.status(404).json({
+                    message:`No hay contenido para el correo ${email}`,
+                    error_Status:404
+                });
+            }else{
+                res.send(result[0]);
+                console.log(`EL usuario ${email} Ha ingresado`);
+            };
+        })
+    } catch (error) {
+        console.error(error);
+    };
+};
 
 // Insertar nuevo Intento 
 insert.newAttempt = (req,res)=>{
